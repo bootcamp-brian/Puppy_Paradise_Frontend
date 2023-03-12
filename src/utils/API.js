@@ -1,17 +1,31 @@
-const BASE_URL = '(need to fill this in later)/api';
+const BASE_URL = 'https://puppy-paradise-api.onrender.com/api';
 
 // -- User functions --
 
 // Registers a user
-export const registerUser = async ({ username, password }) => {
+export const registerUser = async ({
+    firstName,
+    lastName,
+    password,
+    phone,
+    email,
+    shippingAddress,
+    billingAddress
+}) => {
     const response = await fetch(`${BASE_URL}/users/register`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
         },
+        // not sure if the body object needs to be setup like it is in loginUser below or not
         body: JSON.stringify({
-            username: `${username}`,
-            password: `${password}`
+            firstName: `${firstName}`,
+            lastName: `${lastName}`,
+            password: `${password}`,
+            phone: phone,
+            email: `${email}`,
+            shippingAddress: shippingAddress,
+            billingAddress: billingAddress
         })
     });
     const data = await response.json();
@@ -19,14 +33,29 @@ export const registerUser = async ({ username, password }) => {
 }
 
 // Logs in a user
-export const loginUser = async ({ username, password }) => {
+export const loginUser = async (email, password) => {
     const response = await fetch(`${BASE_URL}/users/login`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            username: `${username}`,
+            email: `${email}`,
+            password: `${password}`
+        })
+    });
+    const data = await response.json();
+    return data;
+}
+
+// Removes user from reset password list and updates their password
+export const removeResetPassword = async (userId, password) => {
+    const response = await fetch(`${BASE_URL}/users/password_reset/${userId}`, {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
             password: `${password}`
         })
     });
@@ -216,6 +245,17 @@ export const adminGetUserById = async (adminToken, userId) => {
     return data;
 }
 
+// Lets an admin get a list of inactive users
+export const adminGetInactiveUsers = async (adminToken) => {
+    const response = await fetch(`${BASE_URL}/admin/users/inactive`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+    });
+    const data = await response.json();
+    return data;
+}
 
 // Lets an admin get a list of all users
 export const adminGetAllUsers = async (adminToken) => {
@@ -269,6 +309,19 @@ export const adminSetResetPassword = async (adminToken, userId) => {
     return data;
 }
 
+// Lets an admin reactivate a user
+export const adminReactivateUser = async (adminToken, userId) => {
+    const response = await fetch(`${BASE_URL}/admin/users/reactivate/${userId}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+    });
+    const data = await response.json();
+    return data;
+}
+
 // Lets an admin set a user to inactive
 export const adminDeleteUser = async (adminToken, userId) => {
     const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
@@ -284,7 +337,7 @@ export const adminDeleteUser = async (adminToken, userId) => {
 
 // Lets an admin get a list of a user's orders
 export const adminGetOrdersByUser = async (adminToken, userId) => {
-    const response = await fetch(`${BASE_URL}/admin/orders/${userId}`, {
+    const response = await fetch(`${BASE_URL}/admin/orders/users/${userId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${adminToken}`
@@ -425,6 +478,32 @@ export const adminEditPuppyInfo = async ({adminToken, puppyId, ...fields}) => {
           'Authorization': `Bearer ${adminToken}`
         },
         body: JSON.stringify({ ...fields })
+    });
+    const data = await response.json();
+    return data;
+}
+
+// Lets an admin remove a puppy from the storefront
+export const adminDeleteCategory = async (adminToken, categoryId) => {
+    const response = await fetch(`${BASE_URL}/admin/puppies/categories/${categoryId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+    });
+    const data = await response.json();
+    return data;
+}
+
+// Lets an admin remove a puppy from a category
+export const adminRemovePuppyFromCategory = async (adminToken, puppyId, categoryId) => {
+    const response = await fetch(`${BASE_URL}/admin/puppies/tagged_puppies/${puppyId}/${categoryId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
     });
     const data = await response.json();
     return data;
