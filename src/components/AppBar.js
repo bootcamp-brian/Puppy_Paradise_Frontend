@@ -7,20 +7,26 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { Badge } from '@mui/material';
+import { useState, useEffect } from 'react';
 
 
-export default function ButtonAppBar({ token, setToken, adminToken, setAdminToken}) {
-  
+export default function ButtonAppBar({ token, setToken, adminToken, setAdminToken, cartItems, setCartItems}) {
   const { href } = window.location;
   const BASE_URL = 'http://localhost:3000/'
 
   function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('adminToken');
+    localStorage.removeItem('cartItems');
     setToken('');
     setAdminToken('');
+    setCartItems([]);
   }
-  
+
+  const matches = useMediaQuery('(max-width:800px)');
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -29,11 +35,18 @@ export default function ButtonAppBar({ token, setToken, adminToken, setAdminToke
             Puppy Paradise
           </Typography>
             {
+              matches && <MenuIcon /> 
+            }
+            {
+              !matches
+              &&
               href !== BASE_URL + 'home' 
               && 
               <Button color="inherit" href="/home">Home</Button>
             }
             {
+              !matches
+              &&
               adminToken 
               && 
               href !== BASE_URL + 'admin' 
@@ -41,6 +54,8 @@ export default function ButtonAppBar({ token, setToken, adminToken, setAdminToke
               <Button color="inherit" href="/admin">Admin</Button>
             }
             {
+              !matches
+              &&
               token 
               &&
               href !== BASE_URL + 'profile' 
@@ -48,11 +63,15 @@ export default function ButtonAppBar({ token, setToken, adminToken, setAdminToke
               <Button color="inherit" href="/profile">Profile</Button>
             }
             {
+              !matches
+              &&
               token 
               &&
               <Button color="inherit" href="/home"onClick={logout}>Logout</Button>
             }
             {
+              !matches
+              &&
               !token 
               && 
               href !== BASE_URL + 'register' 
@@ -60,6 +79,8 @@ export default function ButtonAppBar({ token, setToken, adminToken, setAdminToke
               <Button color="inherit" href="/register">Register</Button>
             }
             {
+              !matches
+              &&
               !token 
               &&
               href !== BASE_URL + 'login' 
@@ -67,13 +88,17 @@ export default function ButtonAppBar({ token, setToken, adminToken, setAdminToke
               <Button color="inherit" href="/login">Login</Button>
             }
             {
+              !matches
+              &&
               <IconButton
                 size="large"
                 color="inherit"
                 aria-label="cart"
                 href="/cart"
               >
-                <ShoppingCartIcon />
+                <Badge badgeContent={cartItems.length} color="secondary">
+                  <ShoppingCartIcon />
+                </Badge>
               </IconButton>
             } 
         </Toolbar>

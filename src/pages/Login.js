@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -13,8 +11,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
-import { loginUser, removeResetPassword } from '../utils/API';
+import { getCart, loginUser, removeResetPassword } from '../utils/API';
 import { useOutletContext, useNavigate } from 'react-router-dom';
+import Loading from '../components/Loading';
 
 function Copyright(props) {
 
@@ -38,7 +37,7 @@ export default function Login() {
     const [needsReset, setNeedsReset] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [token, setToken, adminToken, setAdminToken] = useOutletContext();
+    const [token, setToken, adminToken, setAdminToken, cartItems, setCartItems, update, setUpdate] = useOutletContext();
     const [passwordError, setPasswordError] = useState(false);
     const [passwordConfirmError, setPasswordConfirmError] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(true);
@@ -50,7 +49,7 @@ export default function Login() {
         } else if (token) {
             navigate('/home');
         }
-    }, [token, navigate]);
+    }, [token, adminToken, navigate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -60,12 +59,12 @@ export default function Login() {
         const email = data.get('email');
         const user = await loginUser(email, password);
 
-        console.log(user)
         if (user.userId) {
             setUserId(user.userId)
         }
 
         if (user.needsReset) {
+            setErrorMessage('');
             setNeedsReset(true);
         }
 
@@ -92,7 +91,7 @@ export default function Login() {
         event.preventDefault();
         setIsLoading(true);
         const data = new FormData(event.currentTarget);
-        const password = data.get('password');
+        const password = data.get('passwordNew');
         const passwordConfirm = data.get('passwordConfirm');
 
         if (password.length < 8) {
@@ -108,11 +107,13 @@ export default function Login() {
         }
         
         if (passwordError || passwordConfirmError) {
+            setIsLoading(false);
             return;
         }
 
         if (password !== passwordConfirm) {
             setPasswordsMatch(false);
+            setIsLoading(false);
             return;
         } else {
             setPasswordsMatch(true);
@@ -138,6 +139,10 @@ export default function Login() {
     };
 
     return (
+    <>
+        {
+            isLoading && <Loading />
+        }
         <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -165,14 +170,14 @@ export default function Login() {
                         }
                         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                             <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
                             />
                             <TextField
                                 margin="normal"
@@ -212,68 +217,62 @@ export default function Login() {
                             </Typography>
                         }
                         <Box component="form" onSubmit={handlePasswordSubmit} noValidate sx={{ mt: 1 }}>
-                        {
-                                passwordError ?
-                                        <Grid item xs={12}>
-                                            <TextField
-                                            error
-                                            helperText="Password too short"
-                                            required
-                                            fullWidth
-                                            name="password"
-                                            label="Password"
-                                            type="password"
-                                            id="password"
-                                            autoComplete="new-password"
-                                            />
-                                        </Grid>
-                                :
-                                    !passwordsMatch ? 
-                                        <Grid item xs={12}>
-                                            <TextField
-                                            error
-                                            helperText="Passwords don't match"
-                                            required
-                                            fullWidth
-                                            name="password"
-                                            label="Password"
-                                            type="password"
-                                            id="password"
-                                            autoComplete="new-password"
-                                            />
-                                        </Grid>
-                                    :
-                                        <Grid item xs={12}>
-                                            <TextField
-                                            required
-                                            fullWidth
-                                            name="password"
-                                            label="Password"
-                                            type="password"
-                                            id="password"
-                                            autoComplete="new-password"
-                                            />
-                                        </Grid>   
-                            }
                             {
-                                passwordConfirmError ?
-                                    <Grid item xs={12}>
-                                        <TextField
+                                passwordError ?
+                                    <TextField
+                                        margin="normal"
                                         error
                                         helperText="Password too short"
                                         required
                                         fullWidth
-                                        name="passwordConfirm"
-                                        label="Confirm Password"
+                                        name="passwordNew"
+                                        label="New Password"
                                         type="password"
-                                        id="passwordConfirm"
+                                        id="passwordNew"
                                         autoComplete="new-password"
-                                        />
-                                    </Grid>
+                                    />
                                 :
                                     !passwordsMatch ? 
-                                        <Grid item xs={12}>
-                                            <TextField
+                                        <TextField
+                                            margin="normal"
+                                            error
+                                            helperText="Passwords don't match"
+                                            required
+                                            fullWidth
+                                            name="passwordNew"
+                                            label="New Password"
+                                            type="password"
+                                            id="passwordNew"
+                                            autoComplete="new-password"
+                                        />
+                                    :
+                                        <TextField
+                                            margin="normal"
+                                            required
+                                            fullWidth
+                                            name="passwordNew"
+                                            label="New Password"
+                                            type="password"
+                                            id="passwordNew"
+                                            autoComplete="new-password"
+                                        />
+                            }
+                            {
+                                passwordConfirmError ?
+                                        <TextField
+                                            error
+                                            helperText="Password too short"
+                                            required
+                                            fullWidth
+                                            name="passwordConfirm"
+                                            label="Confirm Password"
+                                            type="password"
+                                            id="passwordConfirm"
+                                            autoComplete="new-password"
+                                        />
+                                :
+                                    !passwordsMatch ? 
+                                        <TextField
                                             error
                                             helperText="Passwords don't match"
                                             required
@@ -283,11 +282,9 @@ export default function Login() {
                                             type="password"
                                             id="passwordConfirm"
                                             autoComplete="new-password"
-                                            />
-                                        </Grid>
+                                        />
                                     :
-                                        <Grid item xs={12}>
-                                            <TextField
+                                        <TextField
                                             required
                                             fullWidth
                                             name="passwordConfirm"
@@ -295,8 +292,7 @@ export default function Login() {
                                             type="password"
                                             id="passwordConfirm"
                                             autoComplete="new-password"
-                                            />
-                                        </Grid>
+                                        />
                             }
                             <Button
                             type="submit"
@@ -320,5 +316,6 @@ export default function Login() {
             <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
         </ThemeProvider>
+    </>
     );
 }
