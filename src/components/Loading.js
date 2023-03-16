@@ -6,13 +6,17 @@ export default function Loading() {
   return (
     <Box sx={{
         display: 'flex',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
         width: '100%',
         height: '100%',
         'z-index': 2,
-        opacity: 0.8,
-        backgroundColor: 'gray'
+        background: 'transparent'
      }}>
-      <CircularProgress />
+      <CircularProgress size={125} />
     </Box>
   );
 }

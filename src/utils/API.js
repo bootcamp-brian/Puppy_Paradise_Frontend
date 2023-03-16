@@ -76,7 +76,7 @@ export const getUser = async (token) => {
 }
 
 // Edits the logged in user's info
-export const editUserInfo = async ({ token, ...fields}) => {
+export const editUserInfo = async ({ token, ...fields }) => {
     const response = await fetch(`${BASE_URL}/users/me`, {
         method: "PATCH",
         headers: {
@@ -104,7 +104,7 @@ export const getPuppyCategories = async () => {
 
 // Gets list of puppies tagged with a certain category
 export const getPuppiesByCategory = async (categoryId) => {
-    const response = await fetch(`${BASE_URL}/puppies/${categoryId}`, {
+    const response = await fetch(`${BASE_URL}/puppies/tagged_puppies/${categoryId}`, {
         headers: {
           'Content-Type': 'application/json'
         },
