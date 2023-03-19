@@ -17,6 +17,7 @@ const Orders = () => {
     async function getUserOrders() {
         const results = await getOrders(token);
         setOrders(results);
+        console.log(results)
     }
     getUserOrders();
   }, [token]);
@@ -27,20 +28,34 @@ const Orders = () => {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Status</TableCell>
+            <TableCell align="left">Date</TableCell>
+            <TableCell align="left">Order</TableCell>
+            <TableCell align="left">Status</TableCell>
             <TableCell align="right">Total Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {orders.map((data) => {
-            return (
-              <TableRow key={data.id}>
-                <TableCell>{data.date}</TableCell>
-                <TableCell>{data.status}</TableCell>
-                <TableCell align="right">{`$${data.total}`}</TableCell>
-              </TableRow>
-            )
+            if( !data ) {
+              return (
+                <TableRow>
+                  <TableCell align="center">No Recent Orders</TableCell>
+                </TableRow>
+              )
+            } else {
+              return (
+                <TableRow key={data.id}>
+                  <TableCell align="left">{data.date}</TableCell>
+                  {data.items.map((item, index) => {
+                    return(
+                      <TableCell key={index}> {item.name} </TableCell>
+                    )
+                  })}
+                  <TableCell align="left">{data.status}</TableCell>
+                  <TableCell align="right">{`$${data.total}`}</TableCell>
+                </TableRow>
+              )
+            }
           })}
         </TableBody>
       </Table>
