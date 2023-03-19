@@ -1,17 +1,7 @@
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import { Typography } from "@mui/material";
-import { Box } from "@mui/system";
-import PetsIcon from '@mui/icons-material/Pets';
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import { Button, CardActionArea, CardActions } from '@mui/material';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import PetsIcon from '@mui/icons-material/Pets';
+import { Button, CardActions, Typography, Box, Grid, Paper } from '@mui/material';
 import { addItemToCart, getCart, getPuppyById } from "../utils/API";
-import { useState } from "react";
-import { SettingsBackupRestoreRounded } from "@mui/icons-material";
 
 const PuppyCard = ({ id, imgURL, name, age, size, price, breed, setFeaturedPuppy, setIsLoading, token, cartItems, setCartItems, inCart }) => {
     const convertedAge = Math.floor(age/12);
@@ -62,12 +52,22 @@ const PuppyCard = ({ id, imgURL, name, age, size, price, breed, setFeaturedPuppy
                     data-cart={id}
                     variant="contained"
                     size="medium"
-                    color="primary"
                     onClick={handleAddToCartButtonClick}
-                    sx={{ mr: 1 }}
+                    sx={{
+                        mr: 1,
+                        background: 'green',
+                        ":hover": {
+                            bgcolor: "#106B21",
+                            color: "white" },
+                        "&.Mui-disabled": {
+                            background: "gray",
+                            color: "white",
+                            opacity: 0.8
+                        }
+                    }}
                     disabled={inCart}
                 >
-                    Add To Cart
+                    {inCart ? 'In Cart' : 'Add To Cart'}
                 </Button>
             </CardActions>
             <img
@@ -92,26 +92,29 @@ const PuppyCard = ({ id, imgURL, name, age, size, price, breed, setFeaturedPuppy
                                 alignItems: 'end'
                             }}
                         >
-                            <Typography variant="h4" component="h2" sx={{ fontWeight: "bold" }}>
-                                {name}
+                            <Typography variant="h4" component="h2" sx={{ fontWeight: "bold", pb: 1 }}>
+                                {name.toUpperCase()}
                             </Typography>
                         </Box>
                         <PetsIcon />
                 </Box>
-                        <Typography variant="h6" component="h2" sx={{ fontWeight: "bold", textAlign: 'center' }}>   
-                            {breed}
-                        </Typography>
                 <Box
                     sx={{
                         display: 'flex',
+                        flexDirection: 'column',
                         justifyContent: 'center',
-                        alignItems: 'end'
+                        alignItems: 'center',
+                        borderBottom: '1px solid black',
+                        pb: 1
                     }}
                     >
-                    <Typography variant="h6" component="h2" sx={{ mt: 1, fontWeight: "bold", display: 'flex', justifyContent: 'center' }}>   
-                        Age: {ageText}
+                    <Typography variant="h6" component="h2" sx={{ textAlign: 'center', pt: 1, borderTop: '1px solid black', width: '100%' }}>   
+                        {breed}
                     </Typography>
-                    <Typography variant="h6" component="h2" sx={{ ml: 2, mt: 1, fontWeight: "bold", display: 'flex', justifyContent: 'center' }}>   
+                    <Typography variant="h6" component="h2" sx={{ textAlign: 'center', pt: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>   
+                        {ageText} old
+                    </Typography>
+                    <Typography variant="h6" component="h2" sx={{ textAlign: 'center', pt: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>   
                         Size: {size}
                     </Typography>
                 </Box>
@@ -124,8 +127,8 @@ const PuppyCard = ({ id, imgURL, name, age, size, price, breed, setFeaturedPuppy
                     }}
                     >
                         <PetsIcon />
-                        <Typography variant="h6" component="h2" sx={{ mt: 1, fontWeight: "bold", display: 'flex', justifyContent: 'center', pb: 1 }}>
-                            Price: ${price}
+                        <Typography variant="h4" component="h2" sx={{ pt: 1, fontWeight: "bold", display: 'flex', justifyContent: 'center', pb: 1, color: 'green' }}>
+                            ${price}
                         </Typography>
                         <PetsIcon />
                 </Box>

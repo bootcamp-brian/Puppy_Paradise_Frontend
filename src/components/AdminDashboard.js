@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Paper, Grid } from "@mui/material";
 
-const AdminDashBoard = ({ adminToken }) => {
+const AdminDashBoard = ({ adminToken, setIsLoading }) => {
     
     return (
         <Grid container spacing={3}>

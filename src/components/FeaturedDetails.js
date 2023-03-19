@@ -82,9 +82,19 @@ const FeaturedDetails = ({ featuredPuppy, setFeaturedPuppy, setIsLoading, token,
                     data-cart={id}
                     variant="contained"
                     size="medium"
-                    color="primary"
                     onClick={handleAddToCartButtonClick}
-                    sx={{ mr: 1 }}
+                    sx={{
+                        mr: 1,
+                        background: 'green',
+                        ":hover": {
+                            bgcolor: "#106B21",
+                            color: "white" },
+                        "&.Mui-disabled": {
+                            background: "gray",
+                            color: "white",
+                            opacity: 0.8
+                        }
+                    }}
                     disabled={inCart}
                 >
                     Add To Cart
@@ -92,7 +102,7 @@ const FeaturedDetails = ({ featuredPuppy, setFeaturedPuppy, setIsLoading, token,
             </CardActions>
             <Box sx={{ display: 'flex', borderBottom: '1px solid black' }}>
                 <img
-                    src={image1}
+                    src={image1 ? image1 : 'https://img.freepik.com/free-vector/cute-corgi-dog-eating-bone-cartoon_138676-2534.jpg?w=360'}
                     alt=""
                     className="featuredImages"
                 />
@@ -119,25 +129,44 @@ const FeaturedDetails = ({ featuredPuppy, setFeaturedPuppy, setIsLoading, token,
                                 alignItems: 'end'
                             }}
                         >
-                            <Typography variant="h2" component="h1" sx={{ fontWeight: "bold" }}>
-                                {name}
+                            <Typography variant="h2" component="h1" sx={{ fontWeight: "bold", pb: 2, pt: 1 }}>
+                                {name.toUpperCase()}
                             </Typography>
                         </Box>
                         <PetsIcon />
                 </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                    <Typography variant="h4" component="h2" sx={{ fontWeight: "bold", minWidth: '980px', textAlign: 'center', mt: 2 }}>
-                        {breed} | {ageText} old | {gender} | Size {size}
-                    </Typography>
-                    <Typography variant="h6" component="p" sx={{ fontWeight: "bold", minWidth: '980px', textAlign: 'center', borderTop: '1px solid black', borderBottom: '1px solid black', mt: 2, p: 2 }}>   
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: '1px solid black'}}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
+                        <Typography variant="h4" component="h2" sx={{ fontWeight: "bold", textAlign: 'center', borderRight: '1px solid black', p: 2, flexGrow: 1 }}>
+                            {breed}
+                        </Typography>
+                        <Typography variant="h4" component="h2" sx={{ fontWeight: "bold", textAlign: 'center', borderRight: '1px solid black', p: 2, flexGrow: 1 }}>
+                            {ageText} old
+                        </Typography>
+                        <Typography variant="h4" component="h2" sx={{ fontWeight: "bold", textAlign: 'center', borderRight: '1px solid black', p: 2, flexGrow: 1 }}>
+                            {gender.toLowerCase() === 'female' ? 'Female' : 'Male'}
+                        </Typography>
+                        <Typography variant="h4" component="h2" sx={{ fontWeight: "bold", textAlign: 'center', p: 2, flexGrow: 1 }}>
+                            Size {size}
+                        </Typography>
+                    </Box>
+                    <Typography variant="h5" component="p" sx={{ fontWeight: "bold", minWidth: '980px', textAlign: 'center', borderTop: '1px solid black', borderBottom: '1px solid black', p: 4 }}>   
                         {description}
                     </Typography>
-                    <Typography variant="h5" component="h2" sx={{ fontWeight: "bold", minWidth: '980px', textAlign: 'center', mt: 2 }}>
-                        {weight} lbs |
-                        Pedigree: {pedigree ? 'Yes' : 'No'} |
-                        Vaccinated: {isVaccinated ? 'Yes' : 'No'} |
-                        {gender === 'Female' ? ' Spayed:' : ' Neutered:'} {isAltered ? 'Yes' : 'No'}
-                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', borderBottom: '1px solid black' }}>
+                        <Typography variant="h5" component="h2" sx={{ fontWeight: "bold", textAlign: 'center', borderRight: '1px solid black', p: 2, flexGrow: 1 }}>
+                            Vaccinated: {isVaccinated ? 'Yes' : 'No'} 
+                        </Typography>
+                        <Typography variant="h5" component="h2" sx={{ fontWeight: "bold", textAlign: 'center', borderRight: '1px solid black', p: 2, flexGrow: 1 }}>
+                            Pedigree: {pedigree ? 'Yes' : 'No'}
+                        </Typography>
+                        <Typography variant="h5" component="h2" sx={{ fontWeight: "bold", textAlign: 'center', borderRight: '1px solid black', p: 2, flexGrow: 1 }}>
+                            {gender.toLowerCase() === 'female' ? ' Spayed:' : ' Neutered:'} {isAltered ? 'Yes' : 'No'}
+                        </Typography>
+                        <Typography variant="h5" component="h2" sx={{ fontWeight: "bold", textAlign: 'center', pt: 2, pb: 1, flexGrow: 1 }}>
+                            Weight: {weight} lbs
+                        </Typography>
+                    </Box>
                 </Box>
                 <Box
                     sx={{
@@ -148,7 +177,7 @@ const FeaturedDetails = ({ featuredPuppy, setFeaturedPuppy, setIsLoading, token,
                     }}
                     >
                         <PetsIcon />
-                        <Typography variant="h4" component="h2" sx={{ mt: 1, fontWeight: "bold", display: 'flex', justifyContent: 'center', pb: 1, mt: 2}}>
+                        <Typography variant="h3" component="h2" sx={{ mt: 1, fontWeight: "bold", display: 'flex', justifyContent: 'center', p: 2, color: 'green' }}>
                             Price: ${price}
                         </Typography>
                         <PetsIcon />

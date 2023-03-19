@@ -25,6 +25,7 @@ import AdminDashboard from '../components/AdminDashboard';
 import AdminOrders from '../components/AdminOrders';
 import AdminPuppies from '../components/AdminPuppies';
 import AdminUsers from '../components/AdminUsers';
+import Loading from '../components/Loading';
 // import Chart from './Chart';
 // import Deposits from './Deposits';
 // import Orders from './Orders';
@@ -92,6 +93,10 @@ function DashboardContent() {
     }, [currentView])
 
     return (
+      <>
+        {
+            isLoading && <Loading />
+        }
         <ThemeProvider theme={mdTheme}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
@@ -134,22 +139,23 @@ function DashboardContent() {
                 >
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                         {
-                            currentView === 'dashboard' && <AdminDashboard adminToken={adminToken} />
+                            currentView === 'dashboard' && <AdminDashboard adminToken={adminToken} setIsLoading={setIsLoading} />
                         }
                         {
-                            currentView === 'orders' && <AdminOrders adminToken={adminToken} />
+                            currentView === 'orders' && <AdminOrders adminToken={adminToken} setIsLoading={setIsLoading} />
                         }
                         {
-                            currentView === 'users' && <AdminUsers adminToken={adminToken} />
+                            currentView === 'users' && <AdminUsers adminToken={adminToken} setIsLoading={setIsLoading} />
                         }
                         {
-                            currentView === 'puppies' && <AdminPuppies adminToken={adminToken} />
+                            currentView === 'puppies' && <AdminPuppies adminToken={adminToken} setIsLoading={setIsLoading} />
                         }
                     </Container>
                     <Copyright sx={{ pt: 4 }} />
                 </Box>
             </Box>
         </ThemeProvider>
+      </>
     );
 }
 

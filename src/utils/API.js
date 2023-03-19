@@ -385,6 +385,18 @@ export const adminEditOrderStatus = async (adminToken, orderId, status) => {
     return data;
 }
 
+// Lets an view a list of a puppy's categories
+export const adminGetCategoriesOfPuppy = async (adminToken, puppyId) => {
+    const response = await fetch(`${BASE_URL}/admin/puppies/categories/${puppyId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+    });
+    const data = await response.json();
+    return data;
+}
+
 // Lets an view a list of all puppies
 export const adminGetAllPuppies = async (adminToken) => {
     const response = await fetch(`${BASE_URL}/admin/puppies`, {
@@ -429,8 +441,7 @@ export const adminTagPuppy = async (adminToken, categoryId, puppyId) => {
 }
 
 // Lets an admin create a puppy entry
-export const adminCreatePuppy = async (
-    adminToken,
+export const adminCreatePuppy = async (adminToken, {
     name,
     description,
     age,
@@ -443,7 +454,7 @@ export const adminCreatePuppy = async (
     gender,
     isAvailable,
     price
-) => {
+}) => {
     const response = await fetch(`${BASE_URL}/admin/puppies/`, {
         method: 'POST',
         headers: {
@@ -470,7 +481,7 @@ export const adminCreatePuppy = async (
 }
 
 // Lets an admin change an order's status
-export const adminEditPuppyInfo = async ({adminToken, puppyId, ...fields}) => {
+export const adminEditPuppyInfo = async (adminToken, puppyId, {...fields}) => {
     const response = await fetch(`${BASE_URL}/admin/puppies/${puppyId}`, {
         method: 'PATCH',
         headers: {
@@ -483,7 +494,7 @@ export const adminEditPuppyInfo = async ({adminToken, puppyId, ...fields}) => {
     return data;
 }
 
-// Lets an admin remove a puppy from the storefront
+// Lets an admin delete a category
 export const adminDeleteCategory = async (adminToken, categoryId) => {
     const response = await fetch(`${BASE_URL}/admin/puppies/categories/${categoryId}`, {
         method: 'DELETE',

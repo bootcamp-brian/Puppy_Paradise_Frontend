@@ -14,7 +14,6 @@ import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 
 const Home = () => {
-    const [allCategories, setAllCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [puppies, setPuppies] = useState([]);
     const [featuredPuppy, setFeaturedPuppy] = useState({});
@@ -22,9 +21,12 @@ const Home = () => {
     const [puppiesEndIndex, setPuppiesEndIndex] = useState(9);
     const [puppiesTotal, setPuppiesTotal] = useState(0)
     const [token, setToken, adminToken, setAdminToken, cartItems, setCartItems] = useOutletContext();
+    const [allCategories, setAllCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
     const handleCategorySelect = (event, newValue) => {
+        setPuppiesStartIndex(0);
+        setPuppiesEndIndex(9);
         setSelectedCategories(newValue);
     }
 
@@ -92,23 +94,26 @@ const Home = () => {
         }
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xl">
-                <Autocomplete
-                    multiple
-                    id="category-select"
-                    options={allCategories}
-                    getOptionLabel={(option) => option.name}
-                    value={selectedCategories}
-                    onChange={handleCategorySelect}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                    sx={{ mb: 2 }}
-                    renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Sorting Categories"
-                        placeholder="Categories"
+                {
+                    Object.keys(featuredPuppy).length === 0 &&
+                    <Autocomplete
+                        multiple
+                        id="category-select"
+                        options={allCategories}
+                        getOptionLabel={(option) => option.name}
+                        value={selectedCategories}
+                        onChange={handleCategorySelect}
+                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                        sx={{ mb: 2 }}
+                        renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Sorting Categories"
+                            placeholder="Categories"
+                        />
+                        )}
                     />
-                    )}
-                />
+                }
                 <Grid container spacing={2} sx={{ display: 'flex', alignItems: 'end' }}>
                     {
                         Object.keys(featuredPuppy).length === 0
@@ -169,6 +174,14 @@ const Home = () => {
                                 size="medium"
                                 color="primary"
                                 onClick={handlePrevButtonClick}
+                                sx={{
+                                    mt: 1,
+                                    mb: 1,
+                                    background: '#768087',
+                                    ":hover": {
+                                    bgcolor: "#5e666c",
+                                    color: "white" }
+                                }}
                             >
                                 {'<<'} Prev
                             </Button>
@@ -180,6 +193,14 @@ const Home = () => {
                                 size="medium"
                                 color="primary"
                                 onClick={handleNextButtonClick}
+                                sx={{
+                                    mt: 1,
+                                    mb: 1,
+                                    background: '#768087',
+                                    ":hover": {
+                                    bgcolor: "#5e666c",
+                                    color: "white" }
+                                }}
                             >
                                 Next {'>>'}
                             </Button>

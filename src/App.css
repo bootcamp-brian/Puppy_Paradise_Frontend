@@ -16,6 +16,8 @@
   object-position: 50% 25%;
   border: 1px solid black;
 }
+
+.MuiCollapse-wrapper
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
