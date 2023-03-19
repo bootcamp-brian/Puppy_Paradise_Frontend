@@ -8,6 +8,7 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
+import { Typography } from "@mui/material";
 
 const Orders = () => {
   const [token] = useOutletContext();
@@ -24,41 +25,40 @@ const Orders = () => {
 
   return (
     <>
-      <Title>Recent Orders</Title>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell align="left">Date</TableCell>
-            <TableCell align="left">Order</TableCell>
-            <TableCell align="left">Status</TableCell>
-            <TableCell align="right">Total Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.map((data) => {
-            if( !data ) {
-              return (
-                <TableRow>
-                  <TableCell align="center">No Recent Orders</TableCell>
-                </TableRow>
-              )
-            } else {
-              return (
-                <TableRow key={data.id}>
-                  <TableCell align="left">{data.date}</TableCell>
-                  {data.items.map((item, index) => {
-                    return(
-                      <TableCell key={index}> {item.name} </TableCell>
-                    )
-                  })}
-                  <TableCell align="left">{data.status}</TableCell>
-                  <TableCell align="right">{`$${data.total}`}</TableCell>
-                </TableRow>
-              )
-            }
-          })}
-        </TableBody>
-      </Table>
+      {orders.length === 0 ?             
+        <Typography align="center">No Recent Orders</Typography>
+        :
+        <>
+          <Title>Recent Orders</Title>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">Date</TableCell>
+                <TableCell align="left">Order</TableCell>
+                <TableCell align="left">Status</TableCell>
+                <TableCell align="right">Total Amount</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orders.map((data) => {
+                  return (
+                  <TableRow key={data.id}>
+                    <TableCell align="left">{data.date}</TableCell>
+                    {data.items.map((item, index) => {
+                      return(
+                        <TableCell key={index}> {item.name} </TableCell>
+                      )
+                    })}
+                    <TableCell align="left">{data.status}</TableCell>
+                    <TableCell align="right">{`$${data.total}`}</TableCell>
+                  </TableRow>
+                  )
+                }
+              )}
+            </TableBody>
+          </Table>
+        </>
+      }      
     </>
   );
 }
