@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
-import { getCart, loginUser, removeResetPassword } from '../utils/API';
+import { loginUser, removeResetPassword } from '../utils/API';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import Loading from '../components/Loading';
 
@@ -33,11 +33,10 @@ const theme = createTheme();
 
 export default function Login() {
     const navigate = useNavigate();
-    const [isInactive, setIsInactive] = useState(false);
     const [needsReset, setNeedsReset] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [token, setToken, adminToken, setAdminToken, cartItems, setCartItems, update, setUpdate] = useOutletContext();
+    const [token, setToken, adminToken, setAdminToken, cartItems, setCartItems, checkoutId, setCheckoutId] = useOutletContext();
     const [passwordError, setPasswordError] = useState(false);
     const [passwordConfirmError, setPasswordConfirmError] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(true);
@@ -144,177 +143,177 @@ export default function Login() {
             isLoading && <Loading />
         }
         <ThemeProvider theme={theme}>
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <Box
-            sx={{
-                marginTop: 8,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-            }}
-            >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                {
-                    !needsReset ?
-                    <>
-                        <Typography component="h1" variant="h5">
-                            Sign in
-                        </Typography>
-                        {
-                            errorMessage && <Typography component="p" variant="h6" sx={{ color: 'red' }}>
-                                {errorMessage}
+            <Container component="main" maxWidth="xs">
+                <CssBaseline />
+                <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+                >
+                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    {
+                        !needsReset ?
+                        <>
+                            <Typography component="h1" variant="h5">
+                                Sign in
                             </Typography>
-                        }
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email Address"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                            />
-                            <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            >
-                            Sign In
-                            </Button>
-                            <Grid container>
-                                <Grid item>
-                                    <Link href="/register" variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                    </Link>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </>
-                    :
-                    <>
-                        <Typography component="h1" variant="h5">
-                            Please Reset Your Password
-                        </Typography>
-                        {
-                            errorMessage && <Typography component="p" variant="h6" sx={{ color: 'red' }}>
-                                {errorMessage}
-                            </Typography>
-                        }
-                        <Box component="form" onSubmit={handlePasswordSubmit} noValidate sx={{ mt: 1 }}>
                             {
-                                passwordError ?
-                                    <TextField
-                                        margin="normal"
-                                        error
-                                        helperText="Password too short"
-                                        required
-                                        fullWidth
-                                        name="passwordNew"
-                                        label="New Password"
-                                        type="password"
-                                        id="passwordNew"
-                                        autoComplete="new-password"
-                                    />
-                                :
-                                    !passwordsMatch ? 
-                                        <TextField
-                                            margin="normal"
-                                            error
-                                            helperText="Passwords don't match"
-                                            required
-                                            fullWidth
-                                            name="passwordNew"
-                                            label="New Password"
-                                            type="password"
-                                            id="passwordNew"
-                                            autoComplete="new-password"
-                                        />
-                                    :
-                                        <TextField
-                                            margin="normal"
-                                            required
-                                            fullWidth
-                                            name="passwordNew"
-                                            label="New Password"
-                                            type="password"
-                                            id="passwordNew"
-                                            autoComplete="new-password"
-                                        />
+                                errorMessage && <Typography component="p" variant="h6" sx={{ color: 'red' }}>
+                                    {errorMessage}
+                                </Typography>
                             }
+                            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                    autoFocus
+                                />
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                />
+                                <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                                >
+                                Sign In
+                                </Button>
+                                <Grid container>
+                                    <Grid item>
+                                        <Link href="/register" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                        </Link>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </>
+                        :
+                        <>
+                            <Typography component="h1" variant="h5">
+                                Please Reset Your Password
+                            </Typography>
                             {
-                                passwordConfirmError ?
+                                errorMessage && <Typography component="p" variant="h6" sx={{ color: 'red' }}>
+                                    {errorMessage}
+                                </Typography>
+                            }
+                            <Box component="form" onSubmit={handlePasswordSubmit} noValidate sx={{ mt: 1 }}>
+                                {
+                                    passwordError ?
                                         <TextField
+                                            margin="normal"
                                             error
                                             helperText="Password too short"
                                             required
                                             fullWidth
-                                            name="passwordConfirm"
-                                            label="Confirm Password"
+                                            name="passwordNew"
+                                            label="New Password"
                                             type="password"
-                                            id="passwordConfirm"
-                                            autoComplete="new-password"
-                                        />
-                                :
-                                    !passwordsMatch ? 
-                                        <TextField
-                                            error
-                                            helperText="Passwords don't match"
-                                            required
-                                            fullWidth
-                                            name="passwordConfirm"
-                                            label="Confirm Password"
-                                            type="password"
-                                            id="passwordConfirm"
+                                            id="passwordNew"
                                             autoComplete="new-password"
                                         />
                                     :
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            name="passwordConfirm"
-                                            label="Confirm Password"
-                                            type="password"
-                                            id="passwordConfirm"
-                                            autoComplete="new-password"
-                                        />
-                            }
-                            <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            >
-                            Reset Password
-                            </Button>
-                            <Grid container>
-                                <Grid item>
-                                    <Link href="/register" variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                    </Link>
+                                        !passwordsMatch ? 
+                                            <TextField
+                                                margin="normal"
+                                                error
+                                                helperText="Passwords don't match"
+                                                required
+                                                fullWidth
+                                                name="passwordNew"
+                                                label="New Password"
+                                                type="password"
+                                                id="passwordNew"
+                                                autoComplete="new-password"
+                                            />
+                                        :
+                                            <TextField
+                                                margin="normal"
+                                                required
+                                                fullWidth
+                                                name="passwordNew"
+                                                label="New Password"
+                                                type="password"
+                                                id="passwordNew"
+                                                autoComplete="new-password"
+                                            />
+                                }
+                                {
+                                    passwordConfirmError ?
+                                            <TextField
+                                                error
+                                                helperText="Password too short"
+                                                required
+                                                fullWidth
+                                                name="passwordConfirm"
+                                                label="Confirm Password"
+                                                type="password"
+                                                id="passwordConfirm"
+                                                autoComplete="new-password"
+                                            />
+                                    :
+                                        !passwordsMatch ? 
+                                            <TextField
+                                                error
+                                                helperText="Passwords don't match"
+                                                required
+                                                fullWidth
+                                                name="passwordConfirm"
+                                                label="Confirm Password"
+                                                type="password"
+                                                id="passwordConfirm"
+                                                autoComplete="new-password"
+                                            />
+                                        :
+                                            <TextField
+                                                required
+                                                fullWidth
+                                                name="passwordConfirm"
+                                                label="Confirm Password"
+                                                type="password"
+                                                id="passwordConfirm"
+                                                autoComplete="new-password"
+                                            />
+                                }
+                                <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                                >
+                                Reset Password
+                                </Button>
+                                <Grid container>
+                                    <Grid item>
+                                        <Link href="/register" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                        </Link>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </Box>
-                    </>
-                }
-            </Box>
-            <Copyright sx={{ mt: 8, mb: 4 }} />
-        </Container>
+                            </Box>
+                        </>
+                    }
+                </Box>
+                <Copyright sx={{ mt: 8, mb: 4 }} />
+            </Container>
         </ThemeProvider>
     </>
     );

@@ -1,23 +1,22 @@
 import * as React from 'react';
-import { Paper, Grid, Table, TableHead, TableCell, TableRow, TableBody, Link, CardActionArea, Button, Box, Modal, Typography, Zoom } from "@mui/material";
+import { Paper, Grid, Table, TableHead, TableCell, TableRow, TableBody, Button, Typography, Zoom } from "@mui/material";
 import { useState, useEffect } from 'react';
-import { getPuppyById, adminGetAllPuppies, getAvailablePuppies, getPuppyCategories } from '../utils/API';
+import { getPuppyById, adminGetAllPuppies } from '../utils/API';
 import Title from './Title';
 import PuppyForm from './PuppyForm';
+import CategoryForm from './CategoryForm';
 
 const AdminPuppies = ({ adminToken, setIsLoading }) => {
     const [puppies, setPuppies] = useState([]);
     const [puppiesEndIndex, setPuppiesEndIndex] = useState(5);
     const [puppiesTotal, setPuppiesTotal] = useState(0)
-    const [updateWindowOpen, setUpdateWindowOpen] = useState(false);
-    const [currentPuppyId, setCurrentPuppyId] = useState(0);
     const [sortMethod, setSortMethod] = useState('puppyId');
     const [sortMethodDescending, setSortMethodDescending] = useState(false);
-    const [viewedPuppyStatus, setViewedPuppyStatus] = useState('');
     const [featuredPuppy, setFeaturedPuppy] = useState({})
     const [formMode, setFormMode] = useState('create');
     const [zoom, setZoom] = useState(true);
     const [responseMessage, setResponseMessage] = useState('');
+    const [allCategories, setAllCategories] = useState([]);
 
     const handleShowMoreButtonClick = () => {
         setIsLoading(true);
@@ -142,20 +141,6 @@ const AdminPuppies = ({ adminToken, setIsLoading }) => {
 
     return (
         <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                    sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                    }}
-                >
-                    {/* <Chart /> */}
-                </Paper>
-            </Grid>
-            {/* Recent Deposits */}
             <Grid item xs={12}>
                 <Zoom in={zoom} style={{ transitionDelay: zoom ? '500ms' : '0ms' }}>
                     <Paper
@@ -174,11 +159,28 @@ const AdminPuppies = ({ adminToken, setIsLoading }) => {
                             responseMessage={responseMessage}
                             setResponseMessage={setResponseMessage}
                             setIsLoading={setIsLoading}
+                            allCategories={allCategories}
+                            setAllCategories={setAllCategories}
                         />
                     </Paper>
                 </Zoom>
             </Grid>
-            {/* Puppies List */}
+            <Grid item xs={12}>
+                <Paper
+                    sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column'
+                    }}
+                >
+                    <CategoryForm
+                        adminToken={adminToken}
+                        allCategories={allCategories}
+                        setAllCategories={setAllCategories}
+                        setIsLoading={setIsLoading}
+                    />
+                </Paper>
+            </Grid>
             <Grid item xs={12}>
                 <Paper sx={{
                     p: 2,
@@ -280,7 +282,7 @@ const AdminPuppies = ({ adminToken, setIsLoading }) => {
                                         variant="contained"
                                         size="small"
                                         sx={{
-                                            mt: 1,
+                                            mt: 2,
                                             mb: 1,
                                             background: '#768087',
                                             ":hover": {

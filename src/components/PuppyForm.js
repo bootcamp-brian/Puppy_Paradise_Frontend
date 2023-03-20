@@ -1,6 +1,6 @@
-import { Typography, Box, TextField, Button, FormControlLabel, Checkbox, Radio, RadioGroup, FormControl, FormLabel, Autocomplete, Modal, Zoom } from "@mui/material";
+import { Typography, Box, TextField, Button, FormControlLabel, Checkbox, Radio, RadioGroup, FormControl, FormLabel, Autocomplete, Modal } from "@mui/material";
 import { useEffect, useState } from "react";
-import { adminCreatePuppy, adminEditPuppyInfo, adminGetCategoriesOfPuppy, adminRemovePuppy, adminRemovePuppyFromCategory, adminTagPuppy, getPuppiesByCategory, getPuppyCategories } from "../utils/API";
+import { adminCreatePuppy, adminEditPuppyInfo, adminGetCategoriesOfPuppy, adminRemovePuppy, adminRemovePuppyFromCategory, adminTagPuppy, getPuppyCategories } from "../utils/API";
 
 const PuppyForm = ({
     featuredPuppy,
@@ -10,10 +10,10 @@ const PuppyForm = ({
     setZoom,
     responseMessage,
     setResponseMessage,
-    setIsLoading
+    setIsLoading,
+    allCategories,
+    setAllCategories
 }) => {
-    // const [allCategories, setAllCategories] = useState([]);
-    // const [selectedCategoriesToAdd, setSelectedCategoriesToAdd] = useState([]);
     const [name, setName] = useState('');
     const [breed, setBreed] = useState('');
     const [age, setAge] = useState('');
@@ -32,7 +32,6 @@ const PuppyForm = ({
     const [selectedCategoriesToRemove, setSelectedCategoriesToRemove] = useState([]);
     const [categoriesToAdd, setCategoriesToAdd] = useState([]);
     const [categoriesToRemove, setCategoriesToRemove] = useState([]);
-    const [allCategories, setAllCategories] = useState([]);
     const [responseWindowOpen, setResponseWindowOpen] = useState(false);
 
     const style = {
@@ -63,9 +62,7 @@ const PuppyForm = ({
     }
 
     const handleTextFieldChange = (event, setFunction) => {
-        setIsLoading(true);
         setFunction(event.target.value);
-        setIsLoading(false);
     }
 
     const handleCheckboxChange = (event, setFunction) => {
@@ -77,6 +74,8 @@ const PuppyForm = ({
     const handleUnavailableButtonClick = async () => {
         setIsLoading(true);
         await adminRemovePuppy(adminToken, featuredPuppy.id);
+        setResponseMessage('Puppy Removed.')
+        setResponseWindowOpen(true);
         setIsLoading(false);
     }
 
@@ -234,318 +233,319 @@ const PuppyForm = ({
 
     return (
         <>
-                <Typography align="center" component="h1" variant="h5">
-                    {formMode === 'create' ? 'Add New Puppy To Database' : `Edit Puppy #${featuredPuppy.id}`}
+            <Typography align="center" component="h1" variant="h5">
+                {formMode === 'create' ? 'Add New Puppy To Database' : `Edit Puppy #${featuredPuppy.id}`}
+            </Typography>
+            {/* {
+                errorMessage && <Typography component="p" variant="h6" sx={{ color: 'red' }}>
+                    {errorMessage}
                 </Typography>
-                {/* {
-                    errorMessage && <Typography component="p" variant="h6" sx={{ color: 'red' }}>
-                        {errorMessage}
-                    </Typography>
-                } */}
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        size="small"
-                        id="name"
-                        label="Name"
-                        name="name"
-                        value={name}
-                        onChange={(event) => {
-                            handleTextFieldChange(event, setName);
-                        }}
-                        sx={{ width: '45%' }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        size="small"
-                        fullWidth
-                        name="breed"
-                        label="Breed"
-                        id="breed"
-                        value={breed}
-                        onChange={(event) => {
-                            handleTextFieldChange(event, setBreed);
-                        }}
-                        sx={{ width: '45%' }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        size="small"
-                        fullWidth
-                        name="age"
-                        label="Age / months"
-                        id="age"
-                        type="number"
-                        value={age}
-                        onChange={(event) => {
-                            handleTextFieldChange(event, setAge);
-                        }}
-                        sx={{ width: '30%' }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        size="small"
-                        fullWidth
-                        name="weight"
-                        label="Weight / lbs"
-                        id="weight"
-                        type="number"
-                        value={weight}
-                        onChange={(event) => {
-                            handleTextFieldChange(event, setWeight);
-                        }}
-                        sx={{ width: '30%' }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        size="small"
-                        fullWidth
-                        name="price"
-                        label="Price / $"
-                        id="price"
-                        type="number"
-                        value={price}
-                        onChange={(event) => {
-                            handleTextFieldChange(event, setPrice);
-                        }}
-                        sx={{ width: '30%' }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        size="small"
-                        fullWidth
-                        name="image1"
-                        label="Image URL 1"
-                        id="image1"
-                        value={image1}
-                        onChange={(event) => {
-                            handleTextFieldChange(event, setImage1);
-                        }}
-                        sx={{ width: '45%' }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        size="small"
-                        fullWidth
-                        name="image2"
-                        label="Image URL 2"
-                        id="image2"
-                        value={image2}
-                        onChange={(event) => {
-                            handleTextFieldChange(event, setImage2);
-                        }}
-                        sx={{ width: '45%' }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        size="small"
-                        fullWidth
-                        multiline={true}
-                        rows={3}
-                        name="description"
-                        label="Description"
-                        id="description"
-                        value={description}
-                        onChange={(event) => {
-                            handleTextFieldChange(event, setDescription);
-                        }}
-                        sx={{ width: '100%' }}
-                    />
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%', p: 2 }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                            <FormControl>
-                                <FormLabel id="gender-label">Gender</FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="gender-label"
-                                    value={gender}
-                                    onChange={event => setGender(event.target.value)} 
-                                    name="gender-radio-group"
-                                >
-                                    <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
-                                    <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
-                                </RadioGroup>
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel id="size-label">Size</FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="size-label"
-                                    value={size}
-                                    onChange={event => setSize(event.target.value)} 
-                                    name="size-radio-group"
-                                >
-                                    <FormControlLabel value="S" control={<Radio size="small" />} label="S" />
-                                    <FormControlLabel value="M" control={<Radio size="small" />} label="M" />
-                                    <FormControlLabel value="L" control={<Radio size="small" />} label="L" />
-                                    <FormControlLabel value="XL" control={<Radio size="small" />} label="XL" />
-                                </RadioGroup>
-                            </FormControl>
-                        </Box>
-                        <FormControlLabel
-                            label="Vaccinated?"
-                            control={
-                                <Checkbox
-                                    checked={isVaccinated}
-                                    onChange={event => {
-                                        handleCheckboxChange(event, setIsVaccinated);
-                                    }}
-                                    sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                />
-                            }
-                        />
-                        <FormControlLabel
-                            label="Altered?"
-                            control={
-                                <Checkbox
-                                    checked={isAltered}
-                                    onChange={event => {
-                                        handleCheckboxChange(event, setIsAltered);
-                                    }}
-                                    sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                />
-                            }
-                        />
-                        <FormControlLabel
-                            label="Pedigree?"
-                            control={
-                                    <Checkbox
-                                    checked={pedigree}
-                                    onChange={event => {
-                                        handleCheckboxChange(event, setPedigree);
-                                    }}
-                                    sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                />
-                            }
-                        />
-                        <FormControlLabel
-                            label="For Sale?"
-                            control={
-                                <Checkbox
-                                    checked={isAvailable}
-                                    onChange={event => {
-                                        handleCheckboxChange(event, setIsAvailable);
-                                    }}
-                                    sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                />
-                            }
-                        />
+            } */}
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    size="small"
+                    id="name"
+                    label="Name"
+                    name="name"
+                    value={name}
+                    onChange={(event) => {
+                        handleTextFieldChange(event, setName);
+                    }}
+                    sx={{ width: '45%' }}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    size="small"
+                    fullWidth
+                    name="breed"
+                    label="Breed"
+                    id="breed"
+                    value={breed}
+                    onChange={(event) => {
+                        handleTextFieldChange(event, setBreed);
+                    }}
+                    sx={{ width: '45%' }}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    size="small"
+                    fullWidth
+                    name="age"
+                    label="Age / months"
+                    id="age"
+                    type="number"
+                    value={age}
+                    onChange={(event) => {
+                        handleTextFieldChange(event, setAge);
+                    }}
+                    sx={{ width: '30%' }}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    size="small"
+                    fullWidth
+                    name="weight"
+                    label="Weight / lbs"
+                    id="weight"
+                    type="number"
+                    value={weight}
+                    onChange={(event) => {
+                        handleTextFieldChange(event, setWeight);
+                    }}
+                    sx={{ width: '30%' }}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    size="small"
+                    fullWidth
+                    name="price"
+                    label="Price / $"
+                    id="price"
+                    type="number"
+                    value={price}
+                    onChange={(event) => {
+                        handleTextFieldChange(event, setPrice);
+                    }}
+                    sx={{ width: '30%' }}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    size="small"
+                    fullWidth
+                    name="image1"
+                    label="Image URL 1"
+                    id="image1"
+                    value={image1}
+                    onChange={(event) => {
+                        handleTextFieldChange(event, setImage1);
+                    }}
+                    sx={{ width: '45%' }}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    size="small"
+                    fullWidth
+                    name="image2"
+                    label="Image URL 2"
+                    id="image2"
+                    value={image2}
+                    onChange={(event) => {
+                        handleTextFieldChange(event, setImage2);
+                    }}
+                    sx={{ width: '45%' }}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    size="small"
+                    fullWidth
+                    multiline={true}
+                    rows={3}
+                    name="description"
+                    label="Description"
+                    id="description"
+                    value={description}
+                    onChange={(event) => {
+                        handleTextFieldChange(event, setDescription);
+                    }}
+                    sx={{ width: '100%' }}
+                />
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%', p: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <FormControl>
+                            <FormLabel id="gender-label">Gender</FormLabel>
+                            <RadioGroup
+                                row
+                                aria-labelledby="gender-label"
+                                value={gender}
+                                onChange={event => setGender(event.target.value)} 
+                                name="gender-radio-group"
+                            >
+                                <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
+                                <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
+                            </RadioGroup>
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel id="size-label">Size</FormLabel>
+                            <RadioGroup
+                                row
+                                aria-labelledby="size-label"
+                                value={size}
+                                onChange={event => setSize(event.target.value)} 
+                                name="size-radio-group"
+                            >
+                                <FormControlLabel value="S" control={<Radio size="small" />} label="S" />
+                                <FormControlLabel value="M" control={<Radio size="small" />} label="M" />
+                                <FormControlLabel value="L" control={<Radio size="small" />} label="L" />
+                                <FormControlLabel value="XL" control={<Radio size="small" />} label="XL" />
+                            </RadioGroup>
+                        </FormControl>
                     </Box>
+                    <FormControlLabel
+                        label="Vaccinated?"
+                        control={
+                            <Checkbox
+                                checked={isVaccinated}
+                                onChange={event => {
+                                    handleCheckboxChange(event, setIsVaccinated);
+                                }}
+                                sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                            />
+                        }
+                    />
+                    <FormControlLabel
+                        label="Altered?"
+                        control={
+                            <Checkbox
+                                checked={isAltered}
+                                onChange={event => {
+                                    handleCheckboxChange(event, setIsAltered);
+                                }}
+                                sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                            />
+                        }
+                    />
+                    <FormControlLabel
+                        label="Pedigree?"
+                        control={
+                                <Checkbox
+                                checked={pedigree}
+                                onChange={event => {
+                                    handleCheckboxChange(event, setPedigree);
+                                }}
+                                sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                            />
+                        }
+                    />
+                    <FormControlLabel
+                        label="For Sale?"
+                        control={
+                            <Checkbox
+                                checked={isAvailable}
+                                onChange={event => {
+                                    handleCheckboxChange(event, setIsAvailable);
+                                }}
+                                sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                            />
+                        }
+                    />
+                </Box>
+                <Autocomplete
+                    multiple
+                    id="category-select"
+                    options={formMode === 'create' ? allCategories : categoriesToAdd}
+                    getOptionLabel={(option) => option.name}
+                    value={selectedCategoriesToAdd}
+                    onChange={(event, newValue) => {
+                        handleCategorySelect(event, newValue, setSelectedCategoriesToAdd);
+                    }}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    sx={{ width: "100%", mb: 2 }}
+                    renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Add Categories"
+                        placeholder="Categories"
+                    />
+                    )}
+                />
+                {
+                    formMode === 'edit' &&
                     <Autocomplete
                         multiple
                         id="category-select"
-                        options={formMode === 'create' ? allCategories : categoriesToAdd}
+                        options={categoriesToRemove}
                         getOptionLabel={(option) => option.name}
-                        value={selectedCategoriesToAdd}
+                        value={selectedCategoriesToRemove}
                         onChange={(event, newValue) => {
-                            handleCategorySelect(event, newValue, setSelectedCategoriesToAdd);
+                            handleCategorySelect(event, newValue, setSelectedCategoriesToRemove);
                         }}
                         isOptionEqualToValue={(option, value) => option.id === value.id}
                         sx={{ width: "100%", mb: 2 }}
                         renderInput={(params) => (
                         <TextField
                             {...params}
-                            label="Add Categories"
+                            label="Remove Categories"
                             placeholder="Categories"
                         />
                         )}
                     />
-                    {
-                        formMode === 'edit' &&
-                        <Autocomplete
-                            multiple
-                            id="category-select"
-                            options={categoriesToRemove}
-                            getOptionLabel={(option) => option.name}
-                            value={selectedCategoriesToRemove}
-                            onChange={(event, newValue) => {
-                                handleCategorySelect(event, newValue, setSelectedCategoriesToRemove);
+                }
+                <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mb: 2,
+                    background: 'green',
+                    width: '30%',
+                    ":hover": {
+                        bgcolor: "#106B21",
+                        color: "white" }
+                    }}
+                >
+                Submit {formMode === 'create' ? 'New Puppy' : "Edit"}
+                </Button>
+                <Modal
+                    open={responseWindowOpen}
+                    onClose={handleResponseWindowClose}
+                    slotProps={{ backdrop: {sx: { background: 'rgba(0, 0, 0, 0.2)'}}}}
+                >
+                    <Box sx={style}>
+                        <Typography variant="h2" component="h1">
+                            {responseMessage}
+                        </Typography>
+                    </Box>
+                </Modal>
+                {
+                    formMode === 'edit' &&
+                    <>
+                        <Button
+                            disabled={featuredPuppy.isAvailable ? false : true}
+                            type="button"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mb: 2,
+                                background: '#434B4F',
+                                width: '30%',
+                                ":hover": {
+                                    bgcolor: "#363c3f",
+                                    color: "white" }
                             }}
-                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                            sx={{ width: "100%", mb: 2 }}
-                            renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Remove Categories"
-                                placeholder="Categories"
-                            />
-                            )}
-                        />
-                    }
-                    <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mb: 2,
-                        background: 'green',
-                        width: '30%',
-                        ":hover": {
-                            bgcolor: "#106B21",
-                            color: "white" }
-                        }}
-                    >
-                    Submit {formMode === 'create' ? 'New Puppy' : "Edit"}
-                    </Button>
-                    <Modal
-                        open={responseWindowOpen}
-                        onClose={handleResponseWindowClose}
-                        slotProps={{ backdrop: {sx: { background: 'rgba(0, 0, 0, 0.2)'}}}}
-                    >
-                        <Box sx={style}>
-                            <Typography variant="h2" component="h1">
-                                {responseMessage}
-                            </Typography>
-                        </Box>
-                    </Modal>
-                    {
-                        formMode === 'edit' &&
-                        <>
-                            <Button
-                                type="button"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mb: 2,
-                                    background: '#434B4F',
-                                    width: '30%',
-                                    ":hover": {
-                                        bgcolor: "#363c3f",
-                                        color: "white" }
-                                }}
-                                onClick={handleUnavailableButtonClick}
-                            >
-                                Make Unavailable
-                            </Button>
-                            <Button
-                                type="button"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mb: 2,
-                                    background: '#E71837',
-                                    width: '30%',
-                                    ":hover": {
-                                        bgcolor: "#b9132c",
-                                        color: "white" }
-                                }}
-                                onClick={handleCancelButtonClick}
-                            >
-                                Cancel
-                            </Button>
-                        </>
-                    }
-                </Box>
+                            onClick={handleUnavailableButtonClick}
+                        >
+                            Make Unavailable
+                        </Button>
+                        <Button
+                            type="button"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mb: 2,
+                                background: '#E71837',
+                                width: '30%',
+                                ":hover": {
+                                    bgcolor: "#b9132c",
+                                    color: "white" }
+                            }}
+                            onClick={handleCancelButtonClick}
+                        >
+                            Cancel
+                        </Button>
+                    </>
+                }
+            </Box>
         </>
     )
 }
