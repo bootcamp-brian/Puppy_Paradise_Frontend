@@ -14,8 +14,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItems from '../components/ListItems';
 import { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import AdminDashboard from '../components/AdminDashboard';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import AdminOrders from '../components/AdminOrders';
 import AdminPuppies from '../components/AdminPuppies';
 import AdminUsers from '../components/AdminUsers';
@@ -65,10 +64,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 function DashboardContent() {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(true);
-    const [currentView, setCurrentView] = useState('dashboard');
+    const [currentView, setCurrentView] = useState('orders');
     const [isLoading, setIsLoading] = useState(false);
-    const [token, setToken, adminToken, setAdminToken, cartItems, setCartItems] = useOutletContext();
+    const [token, setToken, adminToken, setAdminToken, cartItems, setCartItems, checkoutId, setCheckoutId] = useOutletContext();
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -80,7 +80,10 @@ function DashboardContent() {
     }
 
     useEffect(() => {
-        renderAdmin();
+      if (!adminToken) {
+        navigate('/home')
+      }
+      renderAdmin();
     }, [currentView])
 
     return (
@@ -128,10 +131,7 @@ function DashboardContent() {
                     overflow: 'auto',
                 }}
                 >
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                        {
-                            currentView === 'dashboard' && <AdminDashboard adminToken={adminToken} setIsLoading={setIsLoading} />
-                        }
+                    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
                         {
                             currentView === 'orders' && <AdminOrders adminToken={adminToken} setIsLoading={setIsLoading} />
                         }

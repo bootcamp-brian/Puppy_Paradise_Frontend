@@ -1,15 +1,7 @@
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import { Typography } from "@mui/material";
-import { Box } from "@mui/system";
-import PetsIcon from '@mui/icons-material/Pets';
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import { Button, CardActionArea, CardActions } from '@mui/material';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { Button, CardActions, Paper, Grid, Typography, Box } from '@mui/material';
 import { addItemToCart, getCart, getPuppyById } from "../utils/API";
+import PetsIcon from '@mui/icons-material/Pets';
 
 const FeaturedDetails = ({ featuredPuppy, setFeaturedPuppy, setIsLoading, token, cartItems, setCartItems }) => {
     const {
@@ -34,7 +26,7 @@ const FeaturedDetails = ({ featuredPuppy, setFeaturedPuppy, setIsLoading, token,
 
     let inCart = false;
     for (let item of cartItems) {
-        if (item.id === id) {
+        if ((token ? item.puppyId : item.id) === id) {
             inCart = true;
             break;
         }
@@ -50,7 +42,7 @@ const FeaturedDetails = ({ featuredPuppy, setFeaturedPuppy, setIsLoading, token,
         setIsLoading(true);
         const cartItemId = Number(event.target.getAttribute('data-cart'));
         if (token) {
-            const cartItem = await addItemToCart(token, cartItemId);
+            await addItemToCart(token, cartItemId);
             const userCart = await getCart(token);
             setCartItems(userCart.cartItems);
         } else {

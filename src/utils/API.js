@@ -137,6 +137,8 @@ export const getAvailablePuppies = async () => {
 
 // -- Orders Functions --
 
+//
+
 // Gets a logged in user's order by the orderId
 export const getOrderById = async (token, orderId) => {
     const response = await fetch(`${BASE_URL}/orders/${orderId}`, {
@@ -161,6 +163,22 @@ export const getOrders = async (token) => {
     return data;
 }
 
+// Creates a new order for a guest
+export const createGuestOrder = async (orderItems, date) => {
+    const response = await fetch(`${BASE_URL}/orders/guest`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            date,
+            orderItems
+        })
+    });
+    const data = await response.json();
+    return data;
+}
+
 // Creates a new order for logged in user and clears their cart
 export const createOrder = async (token, date) => {
     const response = await fetch(`${BASE_URL}/orders`, {
@@ -170,8 +188,7 @@ export const createOrder = async (token, date) => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-            date: `${date}`,
-            status: 'Created'
+            date: `${date}`
         })
     });
     const data = await response.json();
@@ -179,6 +196,17 @@ export const createOrder = async (token, date) => {
 }
 
 // -- Cart Functions --
+
+// Gets the logged in user's cart
+export const getStripeCheckout = async (checkoutId) => {
+    const response = await fetch(`${BASE_URL}/cart/stripe/${checkoutId}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+    });
+    const data = await response.json();
+    return data;
+}
 
 // Gets the logged in user's cart
 export const getCart = async (token) => {
@@ -233,6 +261,30 @@ export const clearCart = async (token) => {
 
 // -- Admin Functions --
 
+// Lets an admin get a list of users that neeed password resets
+export const adminGetAllResetUsers = async (adminToken) => {
+    const response = await fetch(`${BASE_URL}/admin/resetUsers`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+    });
+    const data = await response.json();
+    return data;
+}
+
+// Lets an admin get a list of admins
+export const adminGetAllAdmins = async (adminToken) => {
+    const response = await fetch(`${BASE_URL}/admin`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+    });
+    const data = await response.json();
+    return data;
+}
+
 // Lets an admin get a specific user's info
 export const adminGetUserById = async (adminToken, userId) => {
     const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
@@ -270,7 +322,7 @@ export const adminGetAllUsers = async (adminToken) => {
 }
 
 // Lets an admin edit a user's info
-export const adminEditUserInfo = async ( adminToken, userId,{ ...fields }) => {
+export const adminEditUserInfo = async ( adminToken, userId, { ...fields }) => {
     const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
         method: "PATCH",
         headers: {
@@ -528,6 +580,21 @@ export const adminRemovePuppy = async (adminToken, puppyId) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${adminToken}`
         }
+    });
+    const data = await response.json();
+    return data;
+}
+
+// Stripe function
+export const stripeCheckoutSession = async (cartItems) => {
+    const response = await fetch(`${BASE_URL}/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            cartItems
+        })
     });
     const data = await response.json();
     return data;

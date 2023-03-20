@@ -1,17 +1,12 @@
 import PuppyCard from "../components/PuppyCard";
-import Grid from "@mui/material/Grid";
 import { useEffect, useState } from "react";
-import { getAvailablePuppies, getOrders, getPuppiesByCategory, getPuppyCategories } from "../utils/API";
+import { getAvailablePuppies, getPuppiesByCategory, getPuppyCategories } from "../utils/API";
 import { useOutletContext } from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Container } from "@mui/system";
 import FeaturedDetails from "../components/FeaturedDetails";
 import Loading from "../components/Loading";
-import { Box, Button } from "@mui/material";
-import Chip from '@mui/material/Chip';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
+import { Box, Button, Autocomplete, TextField, Grid } from "@mui/material";
 
 const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +15,7 @@ const Home = () => {
     const [puppiesStartIndex, setPuppiesStartIndex] = useState(0);
     const [puppiesEndIndex, setPuppiesEndIndex] = useState(9);
     const [puppiesTotal, setPuppiesTotal] = useState(0)
-    const [token, setToken, adminToken, setAdminToken, cartItems, setCartItems] = useOutletContext();
+    const [token, setToken, adminToken, setAdminToken, cartItems, setCartItems, checkoutId, setCheckoutId] = useOutletContext();
     const [allCategories, setAllCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -122,7 +117,7 @@ const Home = () => {
                             const { id, image1, name, age, size, price, breed } = puppy;
                             let inCart = false;
                             for (let item of cartItems) {
-                                if (item.id === puppy.id) {
+                                if ((token ? item.puppyId : item.id) === puppy.id) {
                                     inCart = true;
                                     break;
                                 }
