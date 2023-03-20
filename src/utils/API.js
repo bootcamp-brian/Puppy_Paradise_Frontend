@@ -270,7 +270,7 @@ export const adminGetAllUsers = async (adminToken) => {
 }
 
 // Lets an admin edit a user's info
-export const adminEditUserInfo = async ({ adminToken, userId, ...fields }) => {
+export const adminEditUserInfo = async ( adminToken, userId,{ ...fields }) => {
     const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
         method: "PATCH",
         headers: {
