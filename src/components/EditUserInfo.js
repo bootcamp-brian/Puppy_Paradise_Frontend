@@ -26,7 +26,7 @@ const style = {
     p: 4,
 };
 
-const EditUserInfo = ( {token, user, setUser} ) => {
+const EditUserInfo = ( {token, user, setUser, setShippingAddress. setBillingAddress } ) => {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
     const handleOpen = () => setOpen(true);
@@ -74,6 +74,8 @@ const EditUserInfo = ( {token, user, setUser} ) => {
 
         const updatedUser = await editUserInfo({token, ...userData});
         setUser(updatedUser);
+        setShippingAddress(updatedUser.shippingAddress);
+        setBillingAddress(updatedUser.billingAddress);
         
         if (updatedUser.error) {
             setErrorMessage(updatedUser.message)

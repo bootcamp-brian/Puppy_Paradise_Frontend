@@ -18,7 +18,6 @@ const UserInfo = () => {
     async function getUserInfo() {
         const results = await getUser(token);
         setUser(results);
-        console.log(results)
         setShippingAddress(results.shippingAddress);
         setBillingAddress(results.billingAddress);
     }
@@ -86,6 +85,8 @@ const UserInfo = () => {
                         token={token}
                         user={user}
                         setUser={setUser}
+                        setShippingAddress={setShippingAddress}
+                        setBillingAddress={setBillingAddress}
                     />
                 </Paper>
             </Grid>
