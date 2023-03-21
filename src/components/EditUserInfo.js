@@ -26,7 +26,7 @@ const style = {
     p: 4,
 };
 
-const EditUserInfo = ( {token, user, setUser, setShippingAddress. setBillingAddress } ) => {
+const EditUserInfo = ( {token, user, setUser, setShippingAddress, setBillingAddress } ) => {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
     const handleOpen = () => setOpen(true);
