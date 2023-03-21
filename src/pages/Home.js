@@ -51,26 +51,23 @@ const Home = () => {
                 if (checkoutSession.session.payment_status === "paid") {
                         localStorage.removeItem('checkoutId');
                         setCheckoutId('');
-                        const newOrder = await createOrder(token, timestamp);
-                        console.log(newOrder);
+                        await createOrder(token, timestamp);
                 }
             }
             const userCart = await getCart(token);
             setCartItems(userCart.cartItems)
         } else {
-            console.log(checkoutId)
             if (checkoutId) {
                 const checkoutSession = await getStripeCheckout(checkoutId);
                 const date = new Date();
                 const timestamp = date.toISOString();
                 if (checkoutSession.session.payment_status === "paid") {
-                        localStorage.removeItem('checkoutId');
-                        setCheckoutId('');
-                        const newOrder = await createGuestOrder(cartItems, timestamp);
-                        console.log(newOrder);
-                        localStorage.removeItem('cartItems');
-                        setCartItems([]);
-                    }
+                    localStorage.removeItem('checkoutId');
+                    setCheckoutId('');
+                    await createGuestOrder(cartItems, timestamp);
+                    localStorage.removeItem('cartItems');
+                    setCartItems([]);
+                }
             }
         }
 

@@ -215,7 +215,6 @@ const PuppyForm = ({
             }
     
             for (let category of newCategories) {
-                // console.log(puppyCategoriesMap[category.id], category.id)
                 if (puppyCategoriesMap[category.id]) {
                     newCategoriesToRemove.push(category);
                 } else {
