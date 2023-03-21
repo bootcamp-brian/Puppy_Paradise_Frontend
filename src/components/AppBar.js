@@ -14,7 +14,7 @@ import { useState } from 'react';
 
 export default function ButtonAppBar({ token, setToken, adminToken, setAdminToken, cartItems, setCartItems}) {
   const { href } = window.location;
-  const BASE_URL = 'http://localhost:3000/'
+  const BASE_URL = 'https://unique-truffle-f7b6ba.netlify.app/'
   const [menuWindowOpen, setMenuWindowOpen] = useState(false);
 
   const style = {
