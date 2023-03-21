@@ -21,8 +21,9 @@ import {
         adminGetAllUsers,
         adminDeleteUser,  
         adminPromoteToAdmin, 
-        adminSetResetPassword,
-        adminGetInactiveUsers, 
+        adminGetInactiveUsers,
+        adminGetAllAdmins,
+        adminGetAllResetUsers, 
     } from '../utils/API';
 
 const AdminUsers = ({ adminToken, setIsLoading }) => {
@@ -40,6 +41,8 @@ const AdminUsers = ({ adminToken, setIsLoading }) => {
     const [zoom, setZoom] = useState(true);
                 // eslint-disable-next-line
     const [responseMessage, setResponseMessage] = useState('');
+    const [adminMap, setAdminMap] = useState({});
+    const [passwordResetMap, setPasswordResetMap] = useState({});
 
     const handleShowMoreButtonClick = () => {
         setIsLoading(true);
@@ -87,6 +90,22 @@ const AdminUsers = ({ adminToken, setIsLoading }) => {
 
     const renderAdminUsers = async () => {
         setIsLoading(true);
+        const admins = await adminGetAllAdmins(adminToken);
+        const resetPasswordUsers = await adminGetAllResetUsers(adminToken);
+        const userAdmins = {};
+        const passwordResetUsers = {};
+
+        for (let admin of admins) {
+            userAdmins[admin.userId] = true
+        }
+
+        for (let resetPasswordUser of resetPasswordUsers) {
+            passwordResetUsers[resetPasswordUser.userId] = true
+        }
+
+        setAdminMap(userAdmins);
+        setPasswordResetMap(passwordResetUsers);
+
         const allUsers = await adminGetAllUsers(adminToken);
         allUsers.shift();
         const inactiveUsersArr = []
@@ -284,7 +303,7 @@ const AdminUsers = ({ adminToken, setIsLoading }) => {
                                     <AdminEditUserInfo 
                                         adminToken={adminToken}
                                         setFeaturedUser={setFeaturedUser}
-                                        user={featuredUser}
+                                        featuredUser={featuredUser}
                                         setIsLoading={setIsLoading}
                                     />
                                     
@@ -375,6 +394,30 @@ const AdminUsers = ({ adminToken, setIsLoading }) => {
                                         >
                                             Email
                                         </TableCell>
+                                        <TableCell
+                                            data-header='admin'
+                                            title={`Sort ${sortMethodDescending ? 'ascending' : 'descending'}`}
+                                            sx={{
+                                                ":hover": {
+                                                cursor: 'pointer',
+                                                background: 'lightgray'
+                                            }}}
+                                            onClick={handleHeaderClick}
+                                        >
+                                            Admin
+                                        </TableCell>
+                                        <TableCell
+                                            data-header='needsReset'
+                                            title={`Sort ${sortMethodDescending ? 'ascending' : 'descending'}`}
+                                            sx={{
+                                                ":hover": {
+                                                cursor: 'pointer',
+                                                background: 'lightgray'
+                                            }}}
+                                            onClick={handleHeaderClick}
+                                        >
+                                            Needs Reset
+                                        </TableCell>
                                         <TableCell align="right">Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -387,6 +430,8 @@ const AdminUsers = ({ adminToken, setIsLoading }) => {
                                                         <TableCell>{user.firstName}</TableCell>
                                                         <TableCell>{user.lastName}</TableCell>
                                                         <TableCell>{user.email}</TableCell>
+                                                        <TableCell>{adminMap[user.id] ? 'Yes': 'No'}</TableCell>
+                                                        <TableCell>{passwordResetMap[user.id] ? 'Yes': 'No'}</TableCell>
                                                         <TableCell align="right">
                                                         
                                                             <Button 

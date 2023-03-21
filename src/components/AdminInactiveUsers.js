@@ -17,7 +17,7 @@ import {
         adminReactivateUser,
     } from '../utils/API';
 
-const AdminInactiveUsers = ({ adminToken, user, setIsLoading, setFeaturedUser, inactiveUsers }) => {
+const AdminInactiveUsers = ({ adminToken, setIsLoading, setFeaturedUser, inactiveUsers }) => {
     const [users, setUsers] = useState([]);
     const [usersEndIndex, setUsersEndIndex] = useState(5);
     const [usersTotal, setUsersTotal] = useState(0)
