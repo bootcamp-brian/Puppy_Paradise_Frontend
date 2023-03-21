@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from "react";
-import { adminEditUserInfo } from "../utils/API";
+import { adminEditUserInfo, adminSetResetPassword } from "../utils/API";
 
 const theme = createTheme();
 const style = {
@@ -26,12 +26,19 @@ const style = {
     p: 4,
 };
 
-const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
+const AdminEditUserInfo = ( {adminToken, featuredUser, setFeaturedUser, setIsLoading} ) => {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
     const handleOpen = () => setOpen(true);
     // eslint-disable-next-line
     const [errorMessage, setErrorMessage] = useState('');
+
+    const handleResetPasswordButtonClick = async () => {
+        setIsLoading(true);
+        await adminSetResetPassword(adminToken, featuredUser.id);
+        setFeaturedUser({})
+        setIsLoading(false);
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -71,7 +78,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
             billingAddress
         };
 
-        const updatedUser = await adminEditUserInfo(adminToken, user.id, {...userData});
+        const updatedUser = await adminEditUserInfo(adminToken, featuredUser.id, {...userData});
         
         if (updatedUser.error) {
             setErrorMessage(updatedUser.message)
@@ -83,7 +90,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
     return (
         <>
             <Button 
-                data-editid={user.id}
+                data-editid={featuredUser.id}
                 variant="contained"
                 size="small"
                 sx= {{
@@ -118,11 +125,24 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                 alignItems: 'center',
                             }}
                             >
+                                <Button 
+                                        data-editid={featuredUser.id}
+                                        variant="outlined"
+                                        color='error'
+                                        size="small"
+                                        sx={{
+                                            m: 1, 
+                                            p: 1
+                                        }}
+                                        onClick={handleResetPasswordButtonClick}
+                                    >
+                                        Force Password Reset
+                                    </Button>
                                 <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                                     <Grid container spacing={2}>
                                         <Grid item xs={12} sm={6}>
                                             <TextField
-                                                defaultValue={user.firstName}
+                                                defaultValue={featuredUser.firstName}
                                                 autoComplete="given-name"
                                                 name="firstName"
                                                 fullWidth
@@ -133,7 +153,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <TextField
-                                                defaultValue={user.lastName}
+                                                defaultValue={featuredUser.lastName}
                                                 fullWidth
                                                 id="lastName"
                                                 label="Last Name"
@@ -143,7 +163,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <TextField
-                                                defaultValue={user.email}
+                                                defaultValue={featuredUser.email}
                                                 fullWidth
                                                 id="email"
                                                 label="Email Address"
@@ -153,7 +173,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <TextField
-                                                defaultValue={user.phone}
+                                                defaultValue={featuredUser.phone}
                                                 fullWidth
                                                 name="phone"
                                                 label="Phone"
@@ -177,7 +197,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <TextField
-                                                defaultValue={Object.keys(user).length !== 0 ? user.shippingAddress.address : ''}
+                                                defaultValue={Object.keys(featuredUser).length !== 0 ? featuredUser.shippingAddress.address : ''}
                                                 fullWidth
                                                 id="streetShipping"
                                                 label="Street"
@@ -187,7 +207,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={9}>
                                             <TextField
-                                                defaultValue={Object.keys(user).length !== 0 ?user.shippingAddress.city : ''}
+                                                defaultValue={Object.keys(featuredUser).length !== 0 ?featuredUser.shippingAddress.city : ''}
                                                 fullWidth
                                                 id="cityShipping"
                                                 label="City"
@@ -197,7 +217,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={3}>
                                             <TextField
-                                                defaultValue={Object.keys(user).length !== 0 ?user.shippingAddress.state : ''}
+                                                defaultValue={Object.keys(featuredUser).length !== 0 ?featuredUser.shippingAddress.state : ''}
                                                 fullWidth
                                                 id="stateShipping"
                                                 label="State"
@@ -207,7 +227,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <TextField
-                                                defaultValue={Object.keys(user).length !== 0 ?user.shippingAddress.zip : ''}
+                                                defaultValue={Object.keys(featuredUser).length !== 0 ?featuredUser.shippingAddress.zip : ''}
                                                 fullWidth
                                                 id="zipShipping"
                                                 label="Zip"
@@ -230,7 +250,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <TextField
-                                                defaultValue={Object.keys(user).length !== 0 ?user.billingAddress.address : ''}
+                                                defaultValue={Object.keys(featuredUser).length !== 0 ?featuredUser.billingAddress.address : ''}
                                                 fullWidth
                                                 id="streetBilling"
                                                 label="Street"
@@ -240,7 +260,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={9}>
                                             <TextField
-                                                defaultValue={Object.keys(user).length !== 0 ?user.billingAddress.city : ''}
+                                                defaultValue={Object.keys(featuredUser).length !== 0 ?featuredUser.billingAddress.city : ''}
                                                 fullWidth
                                                 id="cityBilling"
                                                 label="City"
@@ -250,7 +270,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={3}>
                                             <TextField
-                                                defaultValue={Object.keys(user).length !== 0 ?user.billingAddress.state : ''}
+                                                defaultValue={Object.keys(featuredUser).length !== 0 ?featuredUser.billingAddress.state : ''}
                                                 fullWidth
                                                 id="stateBilling"
                                                 label="State"
@@ -260,7 +280,7 @@ const AdminEditUserInfo = ( {adminToken, user, setFeaturedUser} ) => {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <TextField
-                                                defaultValue={Object.keys(user).length !== 0 ?user.billingAddress.zip : ''}
+                                                defaultValue={Object.keys(featuredUser).length !== 0 ?featuredUser.billingAddress.zip : ''}
                                                 fullWidth
                                                 id="zipBilling"
                                                 label="Zip"

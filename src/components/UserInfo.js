@@ -18,6 +18,7 @@ const UserInfo = () => {
     async function getUserInfo() {
         const results = await getUser(token);
         setUser(results);
+        console.log(results)
         setShippingAddress(results.shippingAddress);
         setBillingAddress(results.billingAddress);
     }
