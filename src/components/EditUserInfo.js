@@ -77,7 +77,6 @@ const EditUserInfo = ( {token, user} ) => {
         if (updatedUser.error) {
             setErrorMessage(updatedUser.message)
         }
-        console.log(updatedUser)
         setOpen(false);
     };
 

@@ -52,12 +52,23 @@ const Cart = () => {
         setIsLoading(false);
     }
 
-    const renderCart = () => {
-        let total = 0;
-        for (let item of cartItems) {
-            total += 100 * Number(item.price);
+    const renderCart = async () => {
+        if (token) {
+            const userCart = await getCart(token);
+            setCartItems(userCart.cartItems)
+            
+            let total = 0;
+            for (let item of userCart.cartItems) {
+                total += 100 * Number(item.price);
+            }
+            setSubtotal(total/100);
+        } else {
+            let total = 0;
+            for (let item of cartItems) {
+                total += 100 * Number(item.price);
+            }
+            setSubtotal(total/100);
         }
-        setSubtotal(total/100);
     }
 
     useEffect(() => {

@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
-import { loginUser, removeResetPassword } from '../utils/API';
+import { getCart, loginUser, removeResetPassword } from '../utils/API';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import Loading from '../components/Loading';
 
@@ -74,6 +74,9 @@ export default function Login() {
         }
 
         if (user.token) {
+            const userCart = await getCart(user.token);
+            localStorage.removeItem('cartItems');
+            setCartItems(userCart.cartItems)
             localStorage.setItem('token', user.token);
             setToken(user.token)
         }

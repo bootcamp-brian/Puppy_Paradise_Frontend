@@ -1,6 +1,6 @@
 import PuppyCard from "../components/PuppyCard";
 import { useEffect, useState } from "react";
-import { getAvailablePuppies, getPuppiesByCategory, getPuppyCategories } from "../utils/API";
+import { createGuestOrder, createOrder, getAvailablePuppies, getCart, getPuppiesByCategory, getPuppyCategories, getStripeCheckout } from "../utils/API";
 import { useOutletContext } from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Container } from "@mui/system";
@@ -43,6 +43,37 @@ const Home = () => {
     
     const renderStoreFront = async () => {
         setIsLoading(true);
+        if (token) {
+            if (checkoutId) {
+                const checkoutSession = await getStripeCheckout(checkoutId);
+                const date = new Date();
+                const timestamp = date.toISOString();
+                if (checkoutSession.session.payment_status === "paid") {
+                        localStorage.removeItem('checkoutId');
+                        setCheckoutId('');
+                        const newOrder = await createOrder(token, timestamp);
+                        console.log(newOrder);
+                }
+            }
+            const userCart = await getCart(token);
+            setCartItems(userCart.cartItems)
+        } else {
+            console.log(checkoutId)
+            if (checkoutId) {
+                const checkoutSession = await getStripeCheckout(checkoutId);
+                const date = new Date();
+                const timestamp = date.toISOString();
+                if (checkoutSession.session.payment_status === "paid") {
+                        localStorage.removeItem('checkoutId');
+                        setCheckoutId('');
+                        const newOrder = await createGuestOrder(cartItems, timestamp);
+                        console.log(newOrder);
+                        localStorage.removeItem('cartItems');
+                        setCartItems([]);
+                    }
+            }
+        }
+
         const allAvailablePuppies = await getAvailablePuppies();
         const categoriesData = await getPuppyCategories();
 

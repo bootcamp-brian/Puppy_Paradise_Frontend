@@ -13,41 +13,7 @@ export default function Root() {
     const location = useLocation();
     const page = location.pathname;
 
-    const renderRoot = async () => {
-        console.log('test')
-        if (token) {
-            const userCart = await getCart(token);
-            setCartItems(userCart.cartItems)
-            if (checkoutId) {
-                const checkoutSession = await getStripeCheckout(checkoutId);
-                const date = new Date();
-                const timestamp = date.toISOString();
-                if (checkoutSession.session.payment_status === "paid") {
-                        const newOrder = await createOrder(token, timestamp);
-                        console.log(newOrder)
-                        localStorage.removeItem('checkoutId');
-                        localStorage.removeItem('cartItems');
-                        setCheckoutId('');
-                        setCartItems([]);
-                }
-            }
-        } else {
-            if (checkoutId) {
-                const checkoutSession = await getStripeCheckout(checkoutId);
-                const date = new Date();
-                const timestamp = date.toISOString();
-                if (checkoutSession.session.payment_status === "paid") {
-                        await createGuestOrder(cartItems, timestamp);
-                        localStorage.removeItem('checkoutId');
-                        localStorage.removeItem('cartItems');
-                        setCheckoutId('');
-                        setCartItems([]);
-                    }
-            }
-        }
-    }
     useEffect(() => {
-        renderRoot();
         if (page === "/") {
             navigate("/home");
         }

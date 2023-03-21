@@ -18,7 +18,6 @@ const Orders = () => {
     async function getUserOrders() {
         const results = await getOrders(token);
         setOrders(results);
-        console.log(results)
     }
     getUserOrders();
   }, [token]);
@@ -41,14 +40,12 @@ const Orders = () => {
             </TableHead>
             <TableBody>
               {orders.map((data) => {
+                  const itemNames = data.items.map(item => item.name)
+                  const nameString = itemNames.join(', ');
                   return (
                   <TableRow key={data.id}>
                     <TableCell align="left">{data.date}</TableCell>
-                    {data.items.map((item, index) => {
-                      return(
-                        <TableCell key={index}> {item.name} </TableCell>
-                      )
-                    })}
+                    <TableCell align="left">{nameString}</TableCell>
                     <TableCell align="left">{data.status}</TableCell>
                     <TableCell align="right">{`$${data.total}`}</TableCell>
                   </TableRow>

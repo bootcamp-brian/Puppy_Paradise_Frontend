@@ -88,6 +88,7 @@ const AdminUsers = ({ adminToken, setIsLoading }) => {
     const renderAdminUsers = async () => {
         setIsLoading(true);
         const allUsers = await adminGetAllUsers(adminToken);
+        allUsers.shift();
         const inactiveUsersArr = []
         const inactiveUsersRefs = await adminGetInactiveUsers(adminToken)
         const activeUsers = allUsers.filter(user => {
