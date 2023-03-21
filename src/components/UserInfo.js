@@ -85,6 +85,7 @@ const UserInfo = () => {
                     <EditUserInfo 
                         token={token}
                         user={user}
+                        setUser={setUser}
                     />
                 </Paper>
             </Grid>

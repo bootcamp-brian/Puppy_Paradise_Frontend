@@ -26,7 +26,7 @@ const style = {
     p: 4,
 };
 
-const EditUserInfo = ( {token, user} ) => {
+const EditUserInfo = ( {token, user, setUser} ) => {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
     const handleOpen = () => setOpen(true);
@@ -73,6 +73,7 @@ const EditUserInfo = ( {token, user} ) => {
 
 
         const updatedUser = await editUserInfo({token, ...userData});
+        setUser(updatedUser);
         
         if (updatedUser.error) {
             setErrorMessage(updatedUser.message)
