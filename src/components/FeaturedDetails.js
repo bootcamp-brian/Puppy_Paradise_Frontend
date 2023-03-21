@@ -89,7 +89,7 @@ const FeaturedDetails = ({ featuredPuppy, setFeaturedPuppy, setIsLoading, token,
                     }}
                     disabled={inCart}
                 >
-                    Add To Cart
+                    {inCart ? 'In Cart' : 'Add To Cart'}
                 </Button>
             </CardActions>
             <Box sx={{ display: 'flex', borderBottom: '1px solid black' }}>
